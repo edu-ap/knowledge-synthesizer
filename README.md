@@ -29,16 +29,16 @@ While Fabric's patterns are powerful on their own, this Python integration offer
 - **Customization**: Easily modify output formats and processing workflows
 - **Version Control**: Track changes to synthesized content over time
 - **Automation**: Integrate with existing tools and workflows
-- **Cost Control**: Monitor and manage API usage efficiently
+- **Cost Control**: Monitor and manage [API usage](https://platform.openai.com/usage) efficiently
 
 ## Features
 
-- Direct integration with Fabric's pattern repository
-- Support for multiple OpenAI models (GPT-4, GPT-4 Turbo, GPT-3.5)
+- Direct integration with [Fabric's pattern repository](https://github.com/danielmiessler/fabric)
+- Support for multiple [OpenAI models](https://platform.openai.com/docs/models) (GPT-4, GPT-4 Turbo, GPT-3.5)
 - Interactive pattern selection from Fabric's collection
 - Configurable input/output formats
-- Rate limiting and error handling
-- Automated GitHub-based pattern updates
+- [Rate limiting](https://platform.openai.com/docs/guides/rate-limits) and error handling
+- Automated [GitHub-based](https://docs.github.com/en/rest) pattern updates
 
 ## Architecture
 
@@ -151,13 +151,13 @@ If you're new to coding on macOS, follow these steps first:
    - Click "Install" when prompted
    - Wait for the installation to complete
 
-2. **Install Python**:
+2. **Install [Python](https://www.python.org/downloads/)**:
    - Visit [Python's website](https://www.python.org/downloads/)
    - Download the latest Python installer for macOS
    - Open the downloaded `.pkg` file and follow the installer
    - Verify installation by opening Terminal and running: `python3 --version`
 
-3. **Install Git**:
+3. **Install [Git](https://git-scm.com/)**:
    - If not installed, visit [Git's website](https://git-scm.com/download/mac)
    - Download and install Git for macOS
    - Verify installation: `git --version`
@@ -353,7 +353,7 @@ pip install -e .  # Don't forget the dot (.) at the end!
 ```
 
 The `-e .` means:
-- `-e`: Install in "editable" or "development" mode
+- `-e`: Install in ["editable" or "development" mode](https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs)
 - `.`: Install from the current directory
 
 This reinstallation is necessary when you:
@@ -371,7 +371,7 @@ The editable mode creates a special link to your source code instead of copying 
 
 ### Running Tests
 
-The project uses pytest for testing. Here's how to run tests on macOS:
+The project uses [pytest](https://docs.pytest.org/) for testing. Here's how to run tests on macOS:
 
 ```bash
 # First, make sure you're in the project directory
@@ -412,11 +412,11 @@ When running the Knowledge Synthesizer, several directories will be created:
    - Safe to delete if you need space
 
 3. **Development Directories** (hidden, in project folder):
-   - `.pytest_cache/`: Test cache
-   - `htmlcov/`: Test reports
-   - `.venv/`: Python virtual environment
-   - `__pycache__/`: Python cache
-   - `*.egg-info/`: Package info
+   - `.pytest_cache/`: [Test cache](https://docs.pytest.org/en/stable/cache.html)
+   - `htmlcov/`: [Test coverage reports](https://coverage.readthedocs.io/)
+   - `.venv/`: [Python virtual environment](https://docs.python.org/3/library/venv.html)
+   - `__pycache__/`: [Python cache](https://docs.python.org/3/tutorial/modules.html#compiled-python-files)
+   - `*.egg-info/`: [Package metadata](https://setuptools.pypa.io/en/latest/userguide/development_mode.html)
    - All these are managed automatically and safe to delete
 
 To see hidden folders in Finder:
