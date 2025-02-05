@@ -206,15 +206,9 @@ class KnowledgeSynthesizer:
     def _select_model(self, default_model):
         """Allow user to select the OpenAI model."""
         models = {
-            "1": {
-                "name": "gpt-4"
-            },
-            "2": {
-                "name": "gpt-4-turbo-preview"
-            },
-            "3": {
-                "name": "gpt-3.5-turbo"
-            }
+            "1": {"name": "gpt-4", "description": "Most capable model", "pricing": "Standard"},
+            "2": {"name": "gpt-4-turbo-preview", "description": "Latest GPT-4", "pricing": "Lower cost"},
+            "3": {"name": "gpt-3.5-turbo", "description": "Fast and efficient", "pricing": "Lowest cost"}
         }
         
         if self.test_mode:
