@@ -35,9 +35,19 @@ class KnowledgeSynthesizer:
         if self.dry_run:
             print("\n[DRY RUN] No files will be modified or API calls made\n")
         
-        # Load environment variables
-        print("\nLoading environment variables...")
-        load_dotenv(config_file, override=True)
+        # Get current working directory and create absolute path to .env file
+        current_dir = os.getcwd()
+        env_path = os.path.join(current_dir, config_file)
+        print(f"\nLooking for .env file at: {env_path}")
+        
+        # Load environment variables from the local .env file with override=True
+        if os.path.isfile(env_path):
+            print(f"Found .env file at: {env_path}")
+            load_dotenv(dotenv_path=env_path, override=True)
+        else:
+            print(f"Warning: No .env file found at {env_path}")
+            # Try default location as fallback
+            load_dotenv(config_file, override=True)
         
         # Try to load API key from config file if not provided
         if api_key is None:
@@ -49,9 +59,10 @@ class KnowledgeSynthesizer:
                 print("Found API key in environment variables")
                 print(f"API key length: {len(api_key)}")  # Debug log
                 print(f"API key first 4 chars: {api_key[:4]}")  # Debug log
+                print(f"API key last 3 chars: {api_key[-3:]}")  # Debug log to verify correct key
             else:
                 print("No API key found in environment variables")
-            
+        
         if not api_key and not self.dry_run and not self.test_mode:
             print("Attempting to load API key interactively...")
             api_key = self._load_api_key()
@@ -68,10 +79,24 @@ class KnowledgeSynthesizer:
             print(f"test_mode: {self.test_mode}")  # Debug log
             print(f"Final API key length: {len(api_key) if api_key else 0}")  # Debug log
             print(f"Final API key first 4 chars: {api_key[:4] if api_key else ''}")  # Debug log
+            print(f"Final API key last 3 chars: {api_key[-3:] if api_key and len(api_key) > 3 else ''}")  # Debug log
             self.http_client = httpx.Client(timeout=30.0)
             if not api_key:
                 raise ValueError("OpenAI API key is required for non-dry-run mode")
-            self.client = OpenAI(api_key=api_key)
+            
+            # Initialize OpenAI client with proper configuration for project-based keys
+            try:
+                self.client = OpenAI(
+                    api_key=api_key,
+                    # Add these parameters to better support all key types including project-based keys
+                    # Uncomment if needed based on OpenAI API requirements
+                    # base_url="https://api.openai.com/v1",
+                )
+                print("Successfully initialized OpenAI client")
+            except Exception as e:
+                print(f"Error initializing OpenAI client: {str(e)}")
+                raise
+                
             self.model = self._select_model(model)
             
         # Load patterns
@@ -156,17 +181,33 @@ class KnowledgeSynthesizer:
             return None
 
     def _load_api_key(self) -> Optional[str]:
-        """Load API key from environment."""
+        """Load API key from environment or prompt user."""
+        # Try to find .env file in current directory
+        current_dir = os.getcwd()
+        env_path = os.path.join(current_dir, '.env')
+        
+        # Reload from local .env file if it exists
+        if os.path.isfile(env_path):
+            print(f"Reloading .env from: {env_path}")
+            with open(env_path, 'r') as f:
+                env_content = f.read()
+                print(f"Found .env file with content length: {len(env_content)}")
+            
+            # Force reload environment variables from the local .env file
+            load_dotenv(dotenv_path=env_path, override=True)
+        
         api_key = os.getenv("OPENAI_API_KEY")
         if api_key:
             # Clean up the API key by removing any whitespace or newlines
             api_key = api_key.strip().replace('\n', '').replace('\r', '')
+            print(f"Found API key in environment variables (length: {len(api_key)}, last 3 chars: {api_key[-3:]})")
             
         if not api_key and not self.test_mode:
             api_key = input("Please enter your OpenAI API key: ").strip()
-            # Save to .env file
-            with open('.env', 'w') as f:
+            # Save to .env file in current directory
+            with open(env_path, 'w') as f:
                 f.write(f"OPENAI_API_KEY={api_key}\n")
+                print(f"Saved new API key to {env_path}")
         return api_key
         
     def _load_patterns(self) -> Dict[str, str]:
