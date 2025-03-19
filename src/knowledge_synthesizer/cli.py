@@ -35,6 +35,12 @@ Examples:
 
   # Custom output directory and suffix
   %(prog)s docs/ --output "analysis" --suffix "_insights"
+  
+  # Use local patterns instead of GitHub patterns
+  %(prog)s document.md --patterns-dir my_patterns
+  
+  # Use Google's Gemini models instead of OpenAI
+  %(prog)s document.md --google-api-key YOUR_GOOGLE_API_KEY
 
 For more information, visit: https://github.com/edu-ap/knowledge-synthesizer
 """
@@ -74,6 +80,18 @@ For more information, visit: https://github.com/edu-ap/knowledge-synthesizer
     cache_group.add_argument('--skip-cache', 
                            action='store_true',
                            help='Skip using cached patterns and download fresh copies')
+    
+    # Pattern options
+    pattern_group = parser.add_argument_group('Pattern Options')
+    pattern_group.add_argument('--patterns-dir',
+                             help='Load patterns from a local directory instead of GitHub')
+    
+    # API options
+    api_group = parser.add_argument_group('API Options')
+    api_group.add_argument('--openai-api-key',
+                          help='OpenAI API key (will override value in .env file)')
+    api_group.add_argument('--google-api-key',
+                          help='Google API key for Gemini models (will override value in .env file)')
 
     # Other options
     other_group = parser.add_argument_group('Other Options')
@@ -92,13 +110,16 @@ For more information, visit: https://github.com/edu-ap/knowledge-synthesizer
             return 1
             
         synthesizer = KnowledgeSynthesizer(
+            api_key=args.openai_api_key,
+            google_api_key=args.google_api_key,
             output_dir=args.output,
             output_suffix=args.suffix,
             dry_run=args.dry_run,
             separate_files=args.separate,
             force_refresh=args.force,
             test_mode=False,
-            skip_cache=args.skip_cache
+            skip_cache=args.skip_cache,
+            patterns_dir=args.patterns_dir
         )
         
         if path.is_file():
